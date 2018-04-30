@@ -29,14 +29,14 @@ into a sequences of bytes.  Each integer has exactly one encoding.
 <https://creativecommons.org/licenses/by/3.0/>
 
 To make the encoding unambigious, the first byte MUST NOT be 80~16~.  There
-must be at least one byte in the encoding.  The application MAY define a maximum
-value, e.g. 32 value bits (which would be encoded into up to 5 bytes).
+must be at least one byte in the encoding.  The application SHOULD impose a
+maximum value to avoid integer and buffer overflows.
 
 
 **Examples:**
 
      Decimal VarInt (hex)
------------- ------------
+------------ -----------------
          `0` `00`
          `1` `01`
        `127` `7f`
@@ -48,17 +48,39 @@ value, e.g. 32 value bits (which would be encoded into up to 5 bytes).
 
 ## ByteArray
 
-A *ByteArray* is just an array of bytes.  The meaning of those bytes is
-defined by the application.
+A *ByteArray* is just an array of bytes.  The meaning of those bytes is defined
+by the application.  The application SHOULD impose a maximum length to avoid
+utilizing too much memory while receiving.
+
+~~~
++--------+------+
+| Length | Data |
++--------+------+
+~~~
+
+  * *Length* (*VarInt*): Number of bytes in *Data*.
+  * *Data*: Arbitrary bytes.
 
 ## Utf8String
 
 A *Utf8String* is a text string in UTF8 encoding.  A Byte Order Mark (BOM) MUST
-NOT be used.
+NOT be used.  The string is NOT null terminated.  The application SHOULD impose
+a maximum length to avoid utilizing too much memory while receiving.
+
+
+~~~
++--------+--------+
+| Length | String |
++--------+--------+
+~~~
+
+  * *Length* (*VarInt*): Number of bytes in *String*.
+  * *String*: UTF-8 encoded string.
 
 # Protocol
 
-Each peer sends a sequence of messages to the other peer.  The general structure of each message is:
+Each peer sends a sequence of messages to the other peer.  The general
+structure of each message is:
 
 ~~~
 +---------+-------------------
@@ -96,16 +118,17 @@ example at TCP ACKs as those cannot be trusted even if TLS is used.
 
   * *Type* (*VarInt*): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
-  * *Length* (*VarInt*): Size of the *Payload* in bytes.
-  * *Payload* (*ByteArray*): *Length* bytes of arbitrary data.
+  * *Payload* (*ByteArray*): Arbitrary data.
 
 
 ## DATA\_ACK
 
-Send data to the peer.  This MUST be acknowledged by the recipient, either with
-an `ACK` or an `ERROR`.  If the connection is lost before an `ACK` or `ERROR` is
-received, the sender SHOULD assume that the recipient did not receive it and MAY
-try to send it again after it reconnected.
+Send data to the peer.  Each such message MUST eventually be acknowledged by
+the recipient, either with an `ACK` or an `ERROR`.  If multiple `DATA_ACK`
+messages are sent, the responses MAY arrive in different order.  If the
+connection is lost before an `ACK` or `ERROR` is received, the sender SHOULD
+assume that the recipient did not receive it and MAY try to send it again after
+it reconnected.
 
 ~~~
 +---+-----------+------+--------+---------+
@@ -116,11 +139,11 @@ try to send it again after it reconnected.
   * *MessageID* (*VarInt*): The *MessageID* is used correlate messages to their
     Acknowledges or Errors.  They are defined by the sender of the message and
     can be arbitrary numbers.  The same *MessageID* MUST only be reused once an
-    `ACK` or `ERROR` was received for it. 
+    `ACK` or `ERROR` was received for it.  The recipient SHOULD allow at least
+    128 bits for the *MessageID* to support UUIDs.
   * *Type* (*VarInt*): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
-  * *Length* (*VarInt*): Size of the *Payload* in bytes.
-  * *Payload* (*ByteArray*): *Length* bytes of arbitrary data.
+  * *Payload* (*ByteArray*): Arbitrary data.
 
 ## ACK
 
@@ -139,17 +162,16 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 Acknowledge that a `DATA_ACK` was received but could not be processed.
 
 ~~~
-+---+-----------+-----------+--------+---------+
-| 3 | MessageID | ErrorCode | Length | Details |
-+---+-----------+-----------+--------+---------+
++---+-----------+-----------+---------+
+| 3 | MessageID | ErrorCode | Details |
++---+-----------+-----------+---------+
 ~~~
 
   * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
   * *ErrorCode* (*VarInt*): Application defined error code, meant for automatic
     processing by machines.
-  * *Length* (*VarInt*): Size of the *Details* in bytes.
   * *Details* (*Utf8String*): Error details, meant for logging or display to
-    humans, etc.
+    humans, etc.  May be empty.
 
 ## PING
 
@@ -181,4 +203,4 @@ Is is strongly recommended to use a secure transport layer such as TLS.
 
 Authentication is optional and defined by the application.  For example, Client
 Certificates on a TLS connection may be used or the application can define
-message types.
+message types to implement authentication.
