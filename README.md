@@ -35,16 +35,16 @@ maximum value to avoid integer and buffer overflows.
 
 **Examples:**
 
-     Decimal VarInt (hex)
-------------- -----------------
-          `0` `00`
-          `1` `01`
-        `127` `7f`
-        `128` `80 01`
-        `129` `81 01`
-    `1936442` `ba 98 76`
-  `165580141` `ed 9a fa 4e`
- `4294967295` `ff ff ff ff 0f`
+|      Decimal | VarInt (hex)       |
+|  ----------: | :----------------- |
+|          `0` | `00`               |
+|          `1` | `01`               |
+|        `127` | `7f`               |
+|        `128` | `80 01`            |
+|        `129` | `81 01`            |
+|    `1936442` | `ba 98 76`         |
+|  `165580141` | `ed 9a fa 4e`      |
+| `4294967295` | `ff ff ff ff 0f`   |
 
 ## ByteArray
 
@@ -92,14 +92,14 @@ The *command* is a VarInt. The *variable part* depends on the *command*.
 
 # Commands
 
-  Value Command         Description
-------- --------------- ------------------------------------------------
-      0 `DATA`          Send data, don't expect acknowledgement
-      1 `DATA_ACK`      Send data, expect `ACK` or `ERROR` in return
-      2 `ACK`           Acknowledge a previous `DATA_ACK`
-      3 `ERROR`         Previous `DATA_ACK` could not be processed
-      4 `PING`          Expect `PONG` in return
-      5 `PONG`          Response to `PING`
+| Value | Command    | Description                                      |
+| ----: | :--------- | :----------------------------------------------- |
+|     0 | `DATA`     | Send data, don't expect acknowledgement          |
+|     1 | `DATA_ACK` | Send data, expect `ACK` or `ERROR` in return     |
+|     2 | `ACK`      | Acknowledge a previous `DATA_ACK`                |
+|     3 | `ERROR`    | Previous `DATA_ACK` could not be processed       |
+|     4 | `PING`     | Expect `PONG` in return                          |
+|     5 | `PONG`     | Response to `PING`                               |
 
 ## DATA
 
