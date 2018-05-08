@@ -162,9 +162,9 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 Acknowledge that a `DATA_ACK` was received but could not be processed.
 
 ~~~
-+---+-----------+-----------+---------+
-| 3 | MessageID | ErrorCode | Details |
-+---+-----------+-----------+---------+
++---+-----------+-----------+--------|---------+
+| 3 | MessageID | ErrorCode | Length | Details |
++---+-----------+-----------+--------|---------+
 ~~~
 
   * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
