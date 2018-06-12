@@ -61,22 +61,6 @@ utilizing too much memory while receiving.
   * *Length* (*VarInt*): Number of bytes in *Data*.
   * *Data*: Arbitrary bytes.
 
-## Utf8String
-
-A *Utf8String* is a text string in UTF8 encoding.  A Byte Order Mark (BOM) MUST
-NOT be used.  The string is NOT null terminated.  The application SHOULD impose
-a maximum length to avoid utilizing too much memory while receiving.
-
-
-~~~
-+--------+--------+
-| Length | String |
-+--------+--------+
-~~~
-
-  * *Length* (*VarInt*): Number of bytes in *String*.
-  * *String*: UTF-8 encoded string.
-
 # Protocol
 
 Each peer sends a sequence of messages to the other peer.  The general
@@ -111,9 +95,9 @@ The sender SHOULD NOT try to guess if the recipient got a message by looking for
 example at TCP ACKs as those cannot be trusted even if TLS is used.
 
 ~~~
-+---+------+--------+---------+
-| 0 | Type | Length | Payload |
-+---+------+--------+---------+
++---+------+---------+
+| 0 | Type | Payload |
++---+------+---------+
 ~~~
 
   * *Type* (*VarInt*): Valid values are specified by the application.  The
@@ -131,9 +115,9 @@ assume that the recipient did not receive it and MAY try to send it again after
 it reconnected.
 
 ~~~
-+---+-----------+------+--------+---------+
-| 1 | MessageID | Type | Length | Payload |
-+---+-----------+------+--------+---------+
++---+-----------+------+---------+
+| 1 | MessageID | Type | Payload |
++---+-----------+------+---------+
 ~~~
 
   * *MessageID* (*VarInt*): The *MessageID* is used correlate messages to their
@@ -162,16 +146,16 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 Acknowledge that a `DATA_ACK` was received but could not be processed.
 
 ~~~
-+---+-----------+-----------+--------|---------+
-| 3 | MessageID | ErrorCode | Length | Details |
-+---+-----------+-----------+--------|---------+
++---+-----------+------+---------+
+| 3 | MessageID | Type | Payload |
++---+-----------+------+---------+
 ~~~
 
   * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
-  * *ErrorCode* (*VarInt*): Application defined error code, meant for automatic
-    processing by machines.
-  * *Details* (*Utf8String*): Error details, meant for logging or display to
-    humans, etc.  May be empty.
+  * *Type* (*VarInt*): Application defined error code, meant for automatic
+    processing by machines.  Code `0` is defined as *unknown error*.
+    The *Type* defines the format of the *Payload*.
+  * *Payload* (*ByteArray*): Error details. Can be arbitrary data.
 
 ## PING
 
