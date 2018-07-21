@@ -76,14 +76,15 @@ The *command* is a VarInt. The *variable part* depends on the *command*.
 
 # Commands
 
-| Value | Command    | Description                                      |
-| ----: | :--------- | :----------------------------------------------- |
-|     0 | `DATA`     | Send data, don't expect acknowledgement          |
-|     1 | `DATA_ACK` | Send data, expect `ACK` or `ERROR` in return     |
-|     2 | `ACK`      | Acknowledge a previous `DATA_ACK`                |
-|     3 | `ERROR`    | Previous `DATA_ACK` could not be processed       |
-|     4 | `PING`     | Expect `PONG` in return                          |
-|     5 | `PONG`     | Response to `PING`                               |
+| Value | Command       | Description                                                 |
+| ----: | :------------ | :---------------------------------------------------------- |
+|     0 | `DATA`        | Send data, don't expect acknowledgement                     |
+|     1 | `DATA_ACK`    | Send data, expect `ACK` or `ERROR` in return                |
+|     2 | `ACK`         | Acknowledge a previous `DATA_ACK`                           |
+|     3 | `ERROR`       | Previous `DATA_ACK` could not be processed; with error msg  |
+|     4 | `PING`        | Expect `PONG` in return                                     |
+|     5 | `PONG`        | Response to `PING`                                          |
+|     6 | `ERROR_UNDEF` | Previous `DATA_ACK` could not be processed; unknown error   |
 
 ## DATA
 
@@ -108,9 +109,9 @@ example at TCP ACKs as those cannot be trusted even if TLS is used.
 ## DATA\_ACK
 
 Send data to the peer.  Each such message MUST eventually be acknowledged by
-the recipient, either with an `ACK` or an `ERROR`.  If multiple `DATA_ACK`
+the recipient, either with an `ACK`, an `ERROR` or an `ERROR_UNDEF`.  If multiple `DATA_ACK`
 messages are sent, the responses MAY arrive in different order.  If the
-connection is lost before an `ACK` or `ERROR` is received, the sender SHOULD
+connection is lost before a response is received, the sender SHOULD
 assume that the recipient did not receive it and MAY try to send it again after
 it reconnected.
 
@@ -120,10 +121,10 @@ it reconnected.
 +---+-----------+------+---------+
 ~~~
 
-  * *MessageID* (*VarInt*): The *MessageID* is used correlate messages to their
+  * *MessageID* (*VarInt*): The *MessageID* is used to correlate messages to their
     Acknowledges or Errors.  They are defined by the sender of the message and
     can be arbitrary numbers.  The same *MessageID* MUST only be reused once an
-    `ACK` or `ERROR` was received for it.  The recipient SHOULD allow at least
+    response was received for it.  The recipient SHOULD allow at least
     128 bits for the *MessageID* to support UUIDs.
   * *Type* (*VarInt*): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
@@ -141,7 +142,7 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 
   * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
 
-## ERROR
+## ERROR\_UNDEF
 
 Acknowledge that a `DATA_ACK` was received but could not be processed.
 
@@ -153,8 +154,7 @@ Acknowledge that a `DATA_ACK` was received but could not be processed.
 
   * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
   * *Type* (*VarInt*): Application defined error code, meant for automatic
-    processing by machines.  Code `0` is defined as *unknown error*.
-    The *Type* defines the format of the *Payload*.
+    processing by machines.  The *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Error details. Can be arbitrary data.
 
 ## PING
@@ -177,6 +177,19 @@ Acknowledge a `PING`.
 | 5 |
 +---+
 ~~~
+
+## ERROR\_UNDEF
+
+Acknowledge that a `DATA_ACK` was received but could not be processed.
+The reason for the error is not defined.
+
+~~~
++---+-----------+
+| 6 | MessageID |
++---+-----------+
+~~~
+
+  * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
 
 
 # Security Considerations 
