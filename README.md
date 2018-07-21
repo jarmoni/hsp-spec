@@ -17,20 +17,23 @@ between two connected peers.
 
 ## VarInt
 
-The *VarInt* (variable length integer) type encodes non-negative integers
-into a sequences of bytes.  Each integer has exactly one encoding.
+The *VarInt* (variable length integer) type encodes unsigned integers
+into sequences of bytes.  Each integer has exactly one encoding.
 
-    Each byte in a *VarInt*, except the last byte, has the most significant bit
-    (msb) set -- this indicates that there are further bytes to come.  The lower
-    7 bits of each byte are used to store the two's complement representation of
-    the number in groups of 7 bits, least significant group first.
+The integer is split into groups of seven bits. Each group makes up the lower
+seven bits of a byte, least significant group first. The most significant bit
+of each byte is set if and only if more bytes follow.
 
-<https://developers.google.com/protocol-buffers/docs/encoding#varints>\
-<https://creativecommons.org/licenses/by/3.0/>
+To make the encoding unambigious, the last byte MUST NOT be zero, unless it
+is the only byte in the encoding (i.e. the encoding of the value zero). There
+must be at least one byte in the encoding.
 
-To make the encoding unambigious, the first byte MUST NOT be 80~16~.  There
-must be at least one byte in the encoding.  The application SHOULD impose a
-maximum value to avoid integer and buffer overflows.
+The application SHOULD impose a maximum value to avoid integer and buffer
+overflows.
+
+The *VarInt* has the same encoding as the Google protobuf "Base 128 Varint":
+
+<https://developers.google.com/protocol-buffers/docs/encoding#varints>
 
 
 **Examples:**
