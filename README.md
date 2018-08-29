@@ -145,7 +145,7 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 
   * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
 
-## ERROR\_UNDEF
+## ERROR
 
 Acknowledge that a `DATA_ACK` was received but could not be processed.
 
