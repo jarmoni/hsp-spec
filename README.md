@@ -126,7 +126,7 @@ it reconnected.
 
   * *MessageID* (*VarInt*): The *MessageID* is used to correlate messages to their
     Acknowledges or Errors.  They are defined by the sender of the message and
-    can be arbitrary numbers.  The same *MessageID* MUST only be reused once an
+    can be arbitrary numbers.  The same *MessageID* MUST only be reused once a
     response was received for it.  The recipient SHOULD allow at least
     128 bits for the *MessageID* to support UUIDs.
   * *Type* (*VarInt*): Valid values are specified by the application.  The
