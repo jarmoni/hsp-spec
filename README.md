@@ -22,7 +22,7 @@ payload-fields MAY be defined by the application.
 
 All key-fields MUST be represented unsigned.
   * *1-Byte*: Unsigned char
-  * *2-Byte*: Unsigned short
+  * *2-Byte*: 16 bit unsigned integer
   * *4-Byte*: Unsigned int
 
 
