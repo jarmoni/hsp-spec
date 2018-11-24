@@ -13,13 +13,26 @@ interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 The HSP is a simple bidirectional stream based protocol to transmit messages
 between two connected peers.
 
+# Byte Order
+
+The byte-order of all key-fields MUST be Big-Endian. Byte-order of
+payload-fields MAY be defined by the application.
+
+# Signedness
+
+All key-fields MUST be represented unsigned.
+  * *1-Byte*: Unsigned char
+  * *2-Byte*: Unsigned short
+  * *4-Byte*: Unsigned int
+
+
 # Data Types
 
 ## ByteArray
 
 A *ByteArray* is just an array of bytes.  The meaning of those bytes is defined
-by the application.  The application MAY also restrict the maximum length to avoid
-utilizing too much memory while receivin but MUST NOT reduce the defined size of the
+by the application. The application MAY also restrict the maximum length to avoid
+utilizing too much memory while receiving but MUST NOT reduce the defined size of the
 *Length*-field.
 
 ~~~
@@ -28,7 +41,7 @@ utilizing too much memory while receivin but MUST NOT reduce the defined size of
 +--------+------+
 ~~~
 
-  * *Length* 4-Byte unsigned integer.
+  * *Length*: 4-Byte.
   * *Data*: Arbitrary bytes.
 
 # Protocol
@@ -42,7 +55,7 @@ structure of each message is:
 +---------+-------------------
 ~~~
 
-The *command* is represented by 1 byte. The *variable part* depends on the *command*.
+The *command* is represented by 1-Byte. The *variable part* depends on the *command*.
 
 # Commands
 
@@ -71,7 +84,7 @@ example at TCP ACKs as those cannot be trusted even if TLS is used.
 +---+------+---------+
 ~~~
 
-  * *Type* (2 Byte): Valid values are specified by the application.  The
+  * *Type* (2-Byte): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Arbitrary data.
 
@@ -91,12 +104,12 @@ it reconnected.
 +---+-----------+------+---------+
 ~~~
 
-  * *MessageID* (4 Bytes): The *MessageID* is used to correlate messages to their
+  * *MessageID* (4-Byte): The *MessageID* is used to correlate messages to their
     Acknowledges or Errors.  They are defined by the sender of the message and
     can be arbitrary numbers.  The same *MessageID* MUST only be reused once a
     response was received for it.  The recipient SHOULD allow at least
     128 bits for the *MessageID* to support UUIDs.
-  * *Type* (2 Byte): Valid values are specified by the application.  The
+  * *Type* (2-Byte): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Arbitrary data.
 
@@ -110,7 +123,7 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 +---+-----------+
 ~~~
 
-  * *MessageID* (4 Bytes): The *MessageID* of a previously received `DATA_ACK`.
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
 
 ## ERROR
 
@@ -122,8 +135,8 @@ Acknowledge that a `DATA_ACK` was received but could not be processed.
 +---+-----------+------+---------+
 ~~~
 
-  * *MessageID* (4 Bytes): The *MessageID* of a previously received `DATA_ACK`.
-  * *Type* (4 Bytes): Application defined error code, meant for automatic
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
+  * *Type* (2-Byte): Application defined error code, meant for automatic
     processing by machines.  The *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Error details. Can be arbitrary data.
 
@@ -159,7 +172,7 @@ The reason for the error is not defined.
 +---+-----------+
 ~~~
 
-  * *MessageID* (4 Bytes): The *MessageID* of a previously received `DATA_ACK`.
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
 
 
 # Security Considerations 
