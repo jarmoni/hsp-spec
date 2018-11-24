@@ -13,47 +13,27 @@ interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
 The HSP is a simple bidirectional stream based protocol to transmit messages
 between two connected peers.
 
+# Byte Order
+
+The byte-order of all key-fields MUST be Big-Endian. Byte-order of
+payload-fields are defined by the application.
+
+# Signedness
+
+All key-fields MUST be represented unsigned.
+  * *1-Byte*: 8 bit unsigned integer
+  * *2-Byte*: 16 bit unsigned integer
+  * *4-Byte*: Unsigned int
+
+
 # Data Types
-
-## VarInt
-
-The *VarInt* (variable length integer) type encodes unsigned integers
-into sequences of bytes.  Each integer has exactly one encoding.
-
-The integer is split into groups of seven bits. Each group makes up the lower
-seven bits of a byte, least significant group first. The most significant bit
-of each byte is set if and only if more bytes follow.
-
-To make the encoding unambigious, the last byte MUST NOT be zero, unless it
-is the only byte in the encoding (i.e. the encoding of the value zero). There
-must be at least one byte in the encoding.
-
-The application SHOULD impose a maximum value to avoid integer and buffer
-overflows.
-
-The *VarInt* has the same encoding as the Google protobuf "Base 128 Varint":
-
-<https://developers.google.com/protocol-buffers/docs/encoding#varints>
-
-
-**Examples:**
-
-|      Decimal | VarInt (hex)       |
-|  ----------: | :----------------- |
-|          `0` | `00`               |
-|          `1` | `01`               |
-|        `127` | `7f`               |
-|        `128` | `80 01`            |
-|        `129` | `81 01`            |
-|    `1936442` | `ba 98 76`         |
-|  `165580141` | `ed 9a fa 4e`      |
-| `4294967295` | `ff ff ff ff 0f`   |
 
 ## ByteArray
 
 A *ByteArray* is just an array of bytes.  The meaning of those bytes is defined
-by the application.  The application SHOULD impose a maximum length to avoid
-utilizing too much memory while receiving.
+by the application. The application MAY also restrict the maximum length to avoid
+utilizing too much memory while receiving but MUST NOT reduce the defined size of the
+*Length*-field.
 
 ~~~
 +--------+------+
@@ -61,7 +41,7 @@ utilizing too much memory while receiving.
 +--------+------+
 ~~~
 
-  * *Length* (*VarInt*): Number of bytes in *Data*.
+  * *Length*: 4-Byte.
   * *Data*: Arbitrary bytes.
 
 # Protocol
@@ -75,7 +55,7 @@ structure of each message is:
 +---------+-------------------
 ~~~
 
-The *command* is a VarInt. The *variable part* depends on the *command*.
+The *command* is represented by 1-Byte. The *variable part* depends on the *command*.
 
 # Commands
 
@@ -84,9 +64,9 @@ The *command* is a VarInt. The *variable part* depends on the *command*.
 |     0 | `DATA`        | Send data, don't expect acknowledgement                     |
 |     1 | `DATA_ACK`    | Send data, expect `ACK` or `ERROR` in return                |
 |     2 | `ACK`         | Acknowledge a previous `DATA_ACK`                           |
-|     3 | `ERROR`       | Previous `DATA_ACK` could not be processed; with error msg  |
-|     4 | `PING`        | Expect `PONG` in return                                     |
-|     5 | `PONG`        | Response to `PING`                                          |
+|     3 | `PING`        | Expect `PONG` in return                                     |
+|     4 | `PONG`        | Response to `PING`                                          |
+|     5 | `ERROR`       | Previous `DATA_ACK` could not be processed; with error msg  |
 |     6 | `ERROR_UNDEF` | Previous `DATA_ACK` could not be processed; unknown error   |
 
 ## DATA
@@ -104,7 +84,7 @@ example at TCP ACKs as those cannot be trusted even if TLS is used.
 +---+------+---------+
 ~~~
 
-  * *Type* (*VarInt*): Valid values are specified by the application.  The
+  * *Type* (2-Byte): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Arbitrary data.
 
@@ -124,12 +104,12 @@ it reconnected.
 +---+-----------+------+---------+
 ~~~
 
-  * *MessageID* (*VarInt*): The *MessageID* is used to correlate messages to their
+  * *MessageID* (4-Byte): The *MessageID* is used to correlate messages to their
     Acknowledges or Errors.  They are defined by the sender of the message and
     can be arbitrary numbers.  The same *MessageID* MUST only be reused once a
     response was received for it.  The recipient SHOULD allow at least
     128 bits for the *MessageID* to support UUIDs.
-  * *Type* (*VarInt*): Valid values are specified by the application.  The
+  * *Type* (2-Byte): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Arbitrary data.
 
@@ -143,7 +123,7 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 +---+-----------+
 ~~~
 
-  * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
 
 ## ERROR
 
@@ -155,8 +135,8 @@ Acknowledge that a `DATA_ACK` was received but could not be processed.
 +---+-----------+------+---------+
 ~~~
 
-  * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
-  * *Type* (*VarInt*): Application defined error code, meant for automatic
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
+  * *Type* (2-Byte): Application defined error code, meant for automatic
     processing by machines.  The *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Error details. Can be arbitrary data.
 
@@ -192,7 +172,7 @@ The reason for the error is not defined.
 +---+-----------+
 ~~~
 
-  * *MessageID* (*VarInt*): The *MessageID* of a previously received `DATA_ACK`.
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
 
 
 # Security Considerations 
