@@ -16,7 +16,7 @@ between two connected peers.
 # Byte Order
 
 The byte-order of all key-fields MUST be Big-Endian. Byte-order of
-payload-fields MAY be defined by the application.
+payload-fields are defined by the application.
 
 # Signedness
 
