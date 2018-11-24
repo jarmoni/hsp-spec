@@ -64,9 +64,9 @@ The *command* is represented by 1-Byte. The *variable part* depends on the *comm
 |     0 | `DATA`        | Send data, don't expect acknowledgement                     |
 |     1 | `DATA_ACK`    | Send data, expect `ACK` or `ERROR` in return                |
 |     2 | `ACK`         | Acknowledge a previous `DATA_ACK`                           |
-|     3 | `ERROR`       | Previous `DATA_ACK` could not be processed; with error msg  |
-|     4 | `PING`        | Expect `PONG` in return                                     |
-|     5 | `PONG`        | Response to `PING`                                          |
+|     3 | `PING`        | Expect `PONG` in return                                     |
+|     4 | `PONG`        | Response to `PING`                                          |
+|     5 | `ERROR`       | Previous `DATA_ACK` could not be processed; with error msg  |
 |     6 | `ERROR_UNDEF` | Previous `DATA_ACK` could not be processed; unknown error   |
 
 ## DATA
