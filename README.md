@@ -108,8 +108,7 @@ it reconnected.
   * *MessageID* (4-Byte): The *MessageID* is used to correlate messages to their
     Acknowledges or Errors.  They are defined by the sender of the message and
     can be arbitrary numbers.  The same *MessageID* MUST only be reused once a
-    response was received for it.  The recipient SHOULD allow at least
-    128 bits for the *MessageID* to support UUIDs.
+    response was received for it.
   * *Type* (2-Byte): Valid values are specified by the application.  The
     *Type* defines the format of the *Payload*.
   * *Payload* (*ByteArray*): Arbitrary data.
