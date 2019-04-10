@@ -193,7 +193,7 @@ The reason for the error is not defined.
 
 # Security Considerations 
 
-Is is strongly recommended to use a secure transport layer such as TLS.
+It is strongly recommended to use a secure transport layer such as TLS.
 
 ## Authentication
 
