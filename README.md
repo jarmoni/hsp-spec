@@ -126,21 +126,6 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 
   * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
 
-## ERROR
-
-Acknowledge that a `DATA_ACK` was received but could not be processed.
-
-~~~
-+---+-----------+------+---------+
-| 3 | MessageID | Type | Payload |
-+---+-----------+------+---------+
-~~~
-
-  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
-  * *Type* (2-Byte): Application defined error code, meant for automatic
-    processing by machines.  The *Type* defines the format of the *Payload*.
-  * *Payload* (*ByteArray*): Error details. Can be arbitrary data.
-
 ## PING
 
 Request a `PONG` from the receipient.  For each `PING` received, exactly one
@@ -148,7 +133,7 @@ Request a `PONG` from the receipient.  For each `PING` received, exactly one
 
 ~~~
 +---+
-| 4 |
+| 3 |
 +---+
 ~~~
 
@@ -158,9 +143,24 @@ Acknowledge a `PING`.
 
 ~~~
 +---+
-| 5 |
+| 4 |
 +---+
 ~~~
+
+## ERROR
+
+Acknowledge that a `DATA_ACK` was received but could not be processed.
+
+~~~
++---+-----------+------+---------+
+| 5 | MessageID | Type | Payload |
++---+-----------+------+---------+
+~~~
+
+  * *MessageID* (4-Byte): The *MessageID* of a previously received `DATA_ACK`.
+  * *Type* (2-Byte): Application defined error code, meant for automatic
+    processing by machines.  The *Type* defines the format of the *Payload*.
+  * *Payload* (*ByteArray*): Error details. Can be arbitrary data.
 
 ## ERROR\_UNDEF
 
