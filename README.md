@@ -2,16 +2,15 @@
 
 # Introduction
 
+HSP is a simple bidirectional stream based protocol to transmit messages
+between two connected peers. Messages carry a message type and received message can
+be acknowledged or rejected with an error.
+
 # Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119).
-
-# Protocol Overview
-
-The HSP is a simple bidirectional stream based protocol to transmit messages
-between two connected peers.
 
 # Byte Order
 
