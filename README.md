@@ -11,21 +11,26 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in [RFC 2119](https://tools.ietf.org/html/rfc2119) and
 [RFC 8174](https://tools.ietf.org/html/rfc8174).
 
-# Byte Order
+# Data Types
 
-The byte-order of all key-fields MUST be Big-Endian. Byte-order of
-payload-fields are defined by the application.
+HSP defines two basic data types, Integers and Byte Arrays:
 
-# Signedness
+## Integers
 
-All key-fields MUST be represented unsigned.
+Three integer types are defined:
 
   * *1-Byte*: 8 bit unsigned integer
   * *2-Byte*: 16 bit unsigned integer
   * *4-Byte*: 32 bit unsigned integer
 
+### Signedness
 
-# Data Types
+All key-fields MUST be represented unsigned.
+
+### Byte Order
+
+The byte-order of all key-fields MUST be Big-Endian. Byte-order of
+payload-fields are defined by the application.
 
 ## ByteArray
 
