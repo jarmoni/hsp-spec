@@ -143,7 +143,7 @@ Acknowledge that a `DATA_ACK` was received and processed successfully.
 
 ## PING
 
-Request a `PONG` from the receipient.  For each `PING` received, exactly one
+Request a `PONG` from the recipient.  For each `PING` received, exactly one
 `PONG` MUST be sent.
 
 ~~~
