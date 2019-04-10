@@ -1,5 +1,3 @@
-# hsp-spec
-
 # Introduction
 
 HSP is a simple bidirectional stream based protocol to transmit messages
