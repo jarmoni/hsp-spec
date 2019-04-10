@@ -4,6 +4,9 @@ HSP is a simple bidirectional stream based protocol to transmit messages
 between two connected peers. Messages carry a message type and received message can
 be acknowledged or rejected with an error.
 
+Protocols for actual applications can be based on HSP by defining those message types
+and the corresponding syntax of the payload, message flows, authentication, etc.
+
 # Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
