@@ -32,6 +32,12 @@ All key-fields MUST be represented unsigned.
 The byte-order of all key-fields MUST be Big-Endian. Byte-order of
 payload-fields are defined by the application.
 
+### Examples
+
+  * *1-Byte*: 194 (decimal) is encoded as `"c4"` (hex).
+  * *2-Byte*: 45678 (decimal) is encoded as `"b2 6e"` (hex).
+  * *4-Byte*: 13500844 (decimal) is encoded as `"00 ce 01 ac"` (hex).
+
 ## ByteArray
 
 A *ByteArray* is just an array of bytes.  The meaning of those bytes is defined
@@ -47,6 +53,10 @@ utilizing too much memory while receiving but MUST NOT reduce the defined size o
 
   * *Length*: 4-Byte.
   * *Data*: Arbitrary bytes.
+
+### Examples
+
+  * `"Hello"` is be encoded as `"00 00 00 05 48 65 6c 6c 6f"` (hex).
 
 # Protocol
 
